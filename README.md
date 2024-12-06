@@ -33,6 +33,12 @@ Esta documentación describe cómo clonar el repositorio, abrir el proyecto en V
 PASOS PARA PROBAR LOS ENDPOINTS:
 
 Al ejecutar el proyecto se va abrir Swagger en el navegador. En él nos vamos a apoyar para probar el proyecto. También vamos a necesitar de Postman para probar los endpoints.
+
+Correos y contraseñas de los usuarios existentes:
+Usuario 1: user1@gmail.com; Pass123;
+Usuario 2: user2@gmail.com; Pass456;
+Usuario 3: user3@gmail.com; Pass789;
+
 Ingresar cómo usuario al sistema:
 -	Click en el desplegable /api/Acceso/Ingresar
 -	Click en Try it out
