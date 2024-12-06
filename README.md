@@ -26,6 +26,74 @@ Esta documentación describe cómo clonar el repositorio, abrir el proyecto en V
 	Ejecutar el proyecto
 
 
+
+
+
+
+PASOS PARA PROBAR LOS ENDPOINTS:
+
+Al ejecutar el proyecto se va abrir Swagger en el navegador. En él nos vamos a apoyar para probar el proyecto. También vamos a necesitar de Postman para probar los endpoints.
+Ingresar cómo usuario al sistema:
+-	Click en el desplegable /api/Acceso/Ingresar
+-	Click en Try it out
+-	Dentro del body completar DENTRO DE LAS COMILLAS el correo y la contraseña
+-	Click en Execute
+-	Copiar el valor del “token” SIN LAS COMILLAS del response body y guardarlo en un lugar de fácil acceso
+
+Crear un contacto:
+-	Click en el desplegable /api/Contacto
+-	Copiar el json de ejemplo y guardarlo para reutilizarlo luego
+-	Abrir Postman, nueva pestaña. Seleccionar método POST y en la url pegar https://localhost/api/Contacto
+-	Dentro de “Authorization”, en Auth Type seleccionar “Bearer Token” y en “Token” pegar el token que se guardó al iniciar sesión exitosamente
+-	Dentro de “Body”, pegar el json de ejemplo. Completar con datos DENTRO DE LAS COMILLAS. 
+-	Click en Send
+
+Obtener todos los contactos:
+-	En Postman, ingresar el token
+-	Seleccionar el método GET e ingresar la url https://localhost/api/Contacto
+-	Click en Send
+
+Obtener contacto por id:
+-	En Postman, ingresar el token
+-	Seleccionar el método GET e ingresar la url https://localhost/api/Contacto/1 Reemplazar el 1 por el id deseado
+-	Click en Send
+
+
+Actualizar contacto:
+-	En Postman, ingresar el token
+-	Seleccionar el método PUT e ingresar la url https://localhost/api/Contacto/1 Reemplazar el 1 por el id deseado
+-	Click en Send
+
+Borrar contacto:
+-	En Postman, ingresar el token
+-	Seleccionar el método DELETE e ingresar la url https://localhost/api/Contacto/1 Reemplazar el 1 por el id deseado
+-	Click en Send
+
+Buscar contacto por email o número de teléfono:
+-	En Postman, ingresar el token
+-	Seleccionar el método GET e ingresar la url https://localhost/api/Contacto/buscar?email=isabel@gmail.com&telefono=567890123 Reemplazar el email por el email deseado. Reemplazar el número de teléfono por el número de teléfono deseado
+-	Click en Send
+
+Listar contactos ordenados por email:
+-	En Postman, ingresar el token
+-	Seleccionar el método GET e ingresar la url https://localhost/api/Contacto/ordenados 
+-	Click en Send
+
+Cerrar sesión:
+-	En Postman, ingresar el token
+-	Seleccionar el método POST e ingresar la url https://localhost/api/Acceso/CerrarSesion
+-	Click en Send
+
+Registrar usuario:
+-	Click en el desplegable /api/Acceso/Registrarse
+-	Click en Try it out
+-	Dentro del body completar DENTRO DE LAS COMILLAS el correo, contraseña, nombre y apellido
+-	Click en Execute
+
+
+
+
+
 EL MAYOR DESAFÍO PERSONAL DURANTE EL DESARROLLO 
 
 Uno de los aspectos más desafiantes del desarrollo de este proyecto fue la implementación de la autenticación con JWT. Aunque ya había oído hablar de JWT, no tenía experiencia práctica con esta tecnología. Tenía conocimiento y experience previa en el uso de cookies para el manejo de usuarios, pero al intentar aplicar esta solución me encontré con dificultades para obtener y retornar el token en los endpoints que requerían autenticación. Esto me llevó a optar por el uso de JWT, lo cual, aunque implicó una curva de aprendizaje, me permitió integrar de manera efectiva un sistema de autenticación robusto y seguro en la aplicación.
