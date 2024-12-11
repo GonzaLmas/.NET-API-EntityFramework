@@ -14,5 +14,7 @@ namespace BalearesChallenge.Models
         public DateTime FechaNacimiento { get; set; }
         public int Telefono { get; set; }
         public string Direccion { get; set; }
+        public int? IdTransporte { get; set; }
+        public TransporteModel? Transporte { get; set; }
     }
 }

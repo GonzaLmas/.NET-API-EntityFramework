@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.Contracts;
+using BalearesChallenge.Services;
 
 namespace BalearesChallenge.Controllers
 {
@@ -20,10 +21,12 @@ namespace BalearesChallenge.Controllers
     public class ContactoController : ControllerBase
     {
         private readonly AppDBContext _context;
+        private readonly Utilidades _utilidades;
 
-        public ContactoController(AppDBContext context)
+        public ContactoController(AppDBContext context, Utilidades utilidades)
         {
             _context = context;
+            _utilidades = utilidades;
         }
 
         [HttpPost]
@@ -31,12 +34,41 @@ namespace BalearesChallenge.Controllers
         {
             try
             {
+                if (contacto.IdTransporte.HasValue && !_utilidades.TransporteModelExists(contacto.IdTransporte.Value))
+                    return NotFound("Transporte no encontrado para actualizar.");
+
                 var validacion = ValidarContacto(contacto);
 
                 if (validacion != null)
                     return validacion;
 
+                if (contacto.IdTransporte > 0)
+                {
+                    bool transporteEnUso = await _context.Contactos
+                        .Where(c => c.IdTransporte == contacto.IdTransporte && c.IdContacto != contacto.IdContacto)
+                        .AnyAsync();
+
+                    if (transporteEnUso)
+                    {
+                        return BadRequest("El transporte ya está asignado a otro contacto. Intente con otro transporte por favor.");
+                    }
+
+                    var transporte = await _context.Transportes.FindAsync(contacto.IdTransporte);
+
+                    if (transporte == null)
+                    {
+                        return NotFound("Error. Transporte no encontrado.");
+                    }
+
+                    contacto.Transporte = transporte;
+                }
+                else
+                {
+                    contacto.Transporte = null;
+                }
+
                 _context.Contactos.Add(contacto);
+                
                 await _context.SaveChangesAsync();
 
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Se añadió el contacto correctamente." });
@@ -52,14 +84,26 @@ namespace BalearesChallenge.Controllers
         {
             try
             {
-                var contactoModel = await _context.Contactos.FindAsync(id);
+                var contactoModel = await _context.Contactos.Include(c => c.Transporte)
+                                                  .Where(c => c.IdContacto == id)
+                                                  .Select(c => new
+                                                  {
+                                                      c.IdContacto,
+                                                      c.Nombre,
+                                                      c.Empresa,
+                                                      c.Email,
+                                                      c.FechaNacimiento,
+                                                      c.Telefono,
+                                                      c.Direccion,
+                                                      c.IdTransporte,
+                                                      TipoTransporte = c.Transporte != null ? c.Transporte.TipoTransporte : null
+                                                  }).FirstOrDefaultAsync();
 
                 if (contactoModel == null)
-                {
                     return NotFound("Contacto no encontrado.");
-                }
 
-                return contactoModel;
+
+                return Ok(contactoModel);
             }
             catch (Exception ex)
             {
@@ -75,12 +119,35 @@ namespace BalearesChallenge.Controllers
             if (validacion != null)
                 return validacion;
 
-
-            var contactoModel = await _context.Contactos.FindAsync(id);
+            var contactoModel = await _context.Contactos.Include(c => c.Transporte)
+                                              .FirstOrDefaultAsync(c => c.IdContacto == id);
 
             if (contactoModel == null)
-            {
                 return NotFound("Error. Contacto no encontrado.");
+
+            if (pContacto.IdTransporte > 0)
+            {
+                bool transporteEnUso = await _context.Contactos
+                    .Where(c => c.IdTransporte == pContacto.IdTransporte && c.IdContacto != id)
+                    .AnyAsync();
+
+                if (transporteEnUso)
+                {
+                    return BadRequest("El transporte ya está asignado a otro contacto. Intente con otro transporte por favor.");
+                }
+
+                var transporte = await _context.Transportes.FindAsync(pContacto.IdTransporte);
+
+                if (transporte == null)
+                {
+                    return NotFound("Error. Transporte no encontrado.");
+                }
+
+                contactoModel.Transporte = transporte;
+            }
+            else
+            {
+                contactoModel.Transporte = null;
             }
 
             contactoModel.Nombre = pContacto.Nombre;
@@ -181,7 +248,8 @@ namespace BalearesChallenge.Controllers
                     c.Email,
                     c.FechaNacimiento,
                     c.Telefono,
-                    c.Direccion
+                    c.Direccion,
+                    c.Transporte.TipoTransporte
                 }).ToListAsync();
 
                 return Ok(contactos);
@@ -199,7 +267,7 @@ namespace BalearesChallenge.Controllers
             {
                 var query = _context.Contactos.AsQueryable();
 
-                var contactos = await _context.Contactos.ToListAsync(); 
+                var contactos = await _context.Contactos.ToListAsync();
 
                 var resultados = contactos.Where(c =>
                 {

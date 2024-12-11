@@ -9,6 +9,7 @@ namespace BalearesChallenge.Data
 
         public DbSet<UsuarioModel> Usuarios { get; set; }
         public DbSet<ContactoModel> Contactos { get; set; }
+        public DbSet<TransporteModel> Transportes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,9 +41,22 @@ namespace BalearesChallenge.Data
                 table.Property(col => col.FechaNacimiento).HasColumnType("datetime");
                 table.Property(col => col.Telefono).HasColumnType("int");
                 table.Property(col => col.Direccion).HasMaxLength(50);
+                table.HasOne(col => col.Transporte).WithOne().HasForeignKey<ContactoModel>(col => col.IdTransporte)
+                                                   .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<ContactoModel>().ToTable("Contacto");
+
+
+            modelBuilder.Entity<TransporteModel>(table =>
+            {
+                table.HasKey(col => col.IdTransporte);
+                table.Property(col => col.IdTransporte).UseIdentityColumn().ValueGeneratedOnAdd();
+
+                table.Property(col => col.TipoTransporte).HasMaxLength(25);
+            });
+
+            modelBuilder.Entity<TransporteModel>().ToTable("Transporte");
         }
     }
 }

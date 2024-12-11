@@ -1,10 +1,19 @@
-﻿using System.Security.Cryptography;
+﻿using BalearesChallenge.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BalearesChallenge.Services
 {
     public class Utilidades
     {
+        private readonly AppDBContext _context;
+
+        public Utilidades(AppDBContext context)
+        {
+            _context = context;
+        }
+
         public static string EncriptarClaveRegistro(string clave, out string salt)
         {
             // Genera el salt
@@ -46,6 +55,11 @@ namespace BalearesChallenge.Services
             }
 
             return sb.ToString();
+        }
+
+        public bool TransporteModelExists(int id)
+        {
+            return _context.Transportes.Any(e => e.IdTransporte == id);
         }
     }
 }
