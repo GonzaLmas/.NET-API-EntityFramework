@@ -49,16 +49,12 @@ namespace BalearesChallenge.Controllers
                         .AnyAsync();
 
                     if (transporteEnUso)
-                    {
                         return BadRequest("El transporte ya está asignado a otro contacto. Intente con otro transporte por favor.");
-                    }
 
                     var transporte = await _context.Transportes.FindAsync(contacto.IdTransporte);
 
                     if (transporte == null)
-                    {
                         return NotFound("Error. Transporte no encontrado.");
-                    }
 
                     contacto.Transporte = transporte;
                 }
@@ -132,16 +128,12 @@ namespace BalearesChallenge.Controllers
                     .AnyAsync();
 
                 if (transporteEnUso)
-                {
                     return BadRequest("El transporte ya está asignado a otro contacto. Intente con otro transporte por favor.");
-                }
 
                 var transporte = await _context.Transportes.FindAsync(pContacto.IdTransporte);
 
                 if (transporte == null)
-                {
                     return NotFound("Error. Transporte no encontrado.");
-                }
 
                 contactoModel.Transporte = transporte;
             }
