@@ -1,4 +1,4 @@
-# BalearesChallenge
+
 
 
 
@@ -96,11 +96,4 @@ Registrar usuario:
 -	Dentro del body completar DENTRO DE LAS COMILLAS el correo, contraseña, nombre y apellido
 -	Click en Execute
 
-
-
-
-
-EL MAYOR DESAFÍO PERSONAL DURANTE EL DESARROLLO 
-
-Uno de los aspectos más desafiantes del desarrollo de este proyecto fue la implementación de la autenticación con JWT. Aunque ya había oído hablar de JWT, no tenía experiencia práctica con esta tecnología. Tenía conocimiento y experience previa en el uso de cookies para el manejo de usuarios, pero al intentar aplicar esta solución me encontré con dificultades para obtener y retornar el token en los endpoints que requerían autenticación. Esto me llevó a optar por el uso de JWT, lo cual, aunque implicó una curva de aprendizaje, me permitió integrar de manera efectiva un sistema de autenticación robusto y seguro en la aplicación.
 
